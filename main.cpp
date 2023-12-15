@@ -70,7 +70,8 @@ int main(int argc, char* argv[])
         auto it = errorMessages.find(status);
         if (it != errorMessages.end()) {
             cerr << it->second;
-        } else {
+        } 
+        else {
             cerr << "Unknown error";
         }
 
