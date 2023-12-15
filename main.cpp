@@ -23,6 +23,13 @@ int main(int argc, char* argv[])
     // Use the glob function to get all files in the directory matching a specific pattern (e.g., "*.jpg")
     glob(directoryPath + "/*.jpg", imagePaths);
 
+    std::cout  << "Directory path: " << directoryPath << std::endl;
+
+    // Print images
+    for (const auto& imagePath : imagePaths) {
+        std::cout << "Image path: " << imagePath << std::endl;
+    }
+
     // Read images
     for (const auto& imagePath : imagePaths) {
         Mat img = imread(imagePath);
@@ -41,8 +48,8 @@ int main(int argc, char* argv[])
 
     // Stitch images
     Mat result;
-    Stitcher stitcher = Stitcher::create();
-    Stitcher::Status status = stitcher.stitch(images, result);
+    cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create();
+    Stitcher::Status status = stitcher->stitch(images, result);
 
     // Check if stitching was successful
     if (status != Stitcher::OK) {
