@@ -57,27 +57,26 @@ int main(int argc, char* argv[])
     Stitcher::Status status = stitcher->stitch(images, result);
 
     cout << "Check if stitching was successful\n";
-if (status != Stitcher::OK) {
-    static std::unordered_map<Stitcher::Status, std::string> errorMessages = {
-        {Stitcher::OK, "OK"},
-        {Stitcher::ERR_NEED_MORE_IMGS, "Not enough images for stitching"},
-        {Stitcher::ERR_HOMOGRAPHY_EST_FAIL, "Homography estimation failed"},
-        {Stitcher::ERR_CAMERA_PARAMS_ADJUST_FAIL, "Camera parameter adjustment failed"}
-        // Add more mappings as needed
-    };
+    if (status != Stitcher::OK) {
+        static std::unordered_map<Stitcher::Status, std::string> errorMessages = {
+            {Stitcher::OK, "OK"},
+            {Stitcher::ERR_NEED_MORE_IMGS, "Not enough images for stitching"},
+            {Stitcher::ERR_HOMOGRAPHY_EST_FAIL, "Homography estimation failed"},
+            {Stitcher::ERR_CAMERA_PARAMS_ADJUST_FAIL, "Camera parameter adjustment failed"}
+            // Add more mappings as needed
+        };
 
-    cerr << "Stitching failed: ";
-    auto it = errorMessages.find(status);
-    if (it != errorMessages.end()) {
-        cerr << it->second;
-    } else {
-        cerr << "Unknown error";
+        cerr << "Stitching failed: ";
+        auto it = errorMessages.find(status);
+        if (it != errorMessages.end()) {
+            cerr << it->second;
+        } else {
+            cerr << "Unknown error";
+        }
+
+        cerr << endl;
+        return -1;
     }
-
-    cerr << endl;
-
-    return -1;
-}
 
     // Display the stitched image
     imshow("Stitched Image", result);
