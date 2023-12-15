@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 using namespace std;
 using namespace cv;
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
 
     cout << "Check if stitching was successful\n";
 if (status != Stitcher::OK) {
-    std::map<Stitcher::Status, std::string> errorMessages = {
+    std::unordered_map<Stitcher::Status, std::string> errorMessages = {
         {Stitcher::OK, "OK"},
         {Stitcher::ERR_NEED_MORE_IMGS, "Not enough images for stitching"},
         {Stitcher::ERR_HOMOGRAPHY_EST_FAIL, "Homography estimation failed"},
