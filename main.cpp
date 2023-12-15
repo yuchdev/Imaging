@@ -23,18 +23,18 @@ int main(int argc, char* argv[])
     // Use the glob function to get all files in the directory matching a specific pattern (e.g., "*.jpg")
     glob(directoryPath + "/*.jpg", imagePaths);
 
-    std::cout  << "Directory path: " << directoryPath << std::endl;
+    cout  << "Directory path: " << directoryPath << std::endl;
 
     // Print images
     for (const auto& imagePath : imagePaths) {
-        std::cout << "Image path: " << imagePath << std::endl;
+        cout << "Image path: " << imagePath << '\n';
     }
 
     // Read images
     for (const auto& imagePath : imagePaths) {
         Mat img = imread(imagePath);
         if (img.empty()) {
-            cerr << "Error reading image: " << imagePath << endl;
+            cerr << "Error reading image: " << imagePath << '\n';
             return -1;
         }
         images.push_back(img);
@@ -45,17 +45,38 @@ int main(int argc, char* argv[])
         cerr << "Insufficient number of images for stitching." << endl;
         return -1;
     }
+    cout << "Number of images to stitch: " << images.size() << '\n';
 
-    // Stitch images
+    cout << "Stitch images\n";
     Mat result;
     cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create();
+    stitcher->setPanoConfidenceThresh(1);  // Set confidence threshold to 1 for more output
+    stitcher->setWaveCorrection(true);      // Enable wave correction
+
     Stitcher::Status status = stitcher->stitch(images, result);
 
-    // Check if stitching was successful
-    if (status != Stitcher::OK) {
-        cerr << "Stitching failed: " << status << endl;
-        return -1;
+    cout << "Check if stitching was successful\n";
+if (status != Stitcher::OK) {
+    std::map<Stitcher::Status, std::string> errorMessages = {
+        {Stitcher::OK, "OK"},
+        {Stitcher::ERR_NEED_MORE_IMGS, "Not enough images for stitching"},
+        {Stitcher::ERR_HOMOGRAPHY_EST_FAIL, "Homography estimation failed"},
+        {Stitcher::ERR_CAMERA_PARAMS_ADJUST_FAIL, "Camera parameter adjustment failed"}
+        // Add more mappings as needed
+    };
+
+    cerr << "Stitching failed: ";
+    auto it = errorMessages.find(status);
+    if (it != errorMessages.end()) {
+        cerr << it->second;
+    } else {
+        cerr << "Unknown error";
     }
+
+    cerr << endl;
+
+    return -1;
+}
 
     // Display the stitched image
     imshow("Stitched Image", result);
