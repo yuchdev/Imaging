@@ -17,25 +17,26 @@ int main(int argc, char* argv[])
     }
 
     // Read images from the specified directory
-    string directoryPath = argv[1];
+    string directory_path = argv[1];
+    string file_mask = directory_path + std::string("/*.jpg");
     vector<Mat> images;
-    vector<String> imagePaths;
+    vector<String> image_paths;
 
     // Use the glob function to get all files in the directory matching a specific pattern (e.g., "*.jpg")
-    glob(directoryPath + "/*.jpg", imagePaths);
+    glob(directory_path + "/*.jpg", image_paths);
 
-    cout  << "Directory path: " << directoryPath << std::endl;
+    cout  << "Directory path: " << directory_path << std::endl;
 
     // Print images
-    for (const auto& imagePath : imagePaths) {
-        cout << "Image path: " << imagePath << '\n';
+    for (const auto& image_path : image_paths) {
+        cout << "Image path: " << image_path << '\n';
     }
 
     // Read images
-    for (const auto& imagePath : imagePaths) {
-        Mat img = imread(imagePath);
+    for (const auto& image_path : image_paths) {
+        Mat img = imread(image_path);
         if (img.empty()) {
-            cerr << "Error reading image: " << imagePath << '\n';
+            cerr << "Error reading image: " << image_path << '\n';
             return -1;
         }
         images.push_back(img);
@@ -58,7 +59,7 @@ int main(int argc, char* argv[])
 
     cout << "Check if stitching was successful\n";
     if (status != Stitcher::OK) {
-        static std::unordered_map<Stitcher::Status, std::string> errorMessages = {
+        static std::unordered_map<Stitcher::Status, std::string> error_messages = {
             {Stitcher::OK, "OK"},
             {Stitcher::ERR_NEED_MORE_IMGS, "Not enough images for stitching"},
             {Stitcher::ERR_HOMOGRAPHY_EST_FAIL, "Homography estimation failed"},
@@ -67,8 +68,8 @@ int main(int argc, char* argv[])
         };
 
         cerr << "Stitching failed: ";
-        auto it = errorMessages.find(status);
-        if (it != errorMessages.end()) {
+        auto it = error_messages.find(status);
+        if (it != error_messages.end()) {
             cerr << it->second;
         } 
         else {
