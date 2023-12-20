@@ -8,7 +8,7 @@ find_package(OpenCV REQUIRED)
 set(CMAKE_CXX_STANDARD 11)
 
 # Add executable
-add_executable(image_stitching main.cpp)
+add_executable(image_stitching main.cpp 
 
 # Link against OpenCV
 target_link_libraries(image_stitching ${OpenCV_LIBS})
