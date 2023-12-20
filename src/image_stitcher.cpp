@@ -1,4 +1,6 @@
-#include "ImageStitcher.h"
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "modernize-pass-by-value"
+#include <image_stitching/image_stitcher.h>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -18,20 +20,32 @@ map<cv::Stitcher::Status, string> ImageStitcher::error_messages = {
 };
 
 
-void ImageStitcher::setDirectoryPath(const string& directory_path) :
-        _stitcher(cv::Stitcher::create()),
+ImageStitcher::ImageStitcher(const string& directory_path, const string& stitching_method) :
         _directory_path(directory_path)
 {
+    // Set the stitching method
+    cv::Stitcher::Mode stitching_mode = cv::Stitcher::PANORAMA; // Default to PANORAMA
+    if (!stitching_method.empty()) {
+        // Check for different stitching modes
+        if (stitching_method == "panorama") {
+            stitching_mode = cv::Stitcher::PANORAMA;
+        }
+        else if (stitching_method == "scans") {
+            stitching_mode = cv::Stitcher::SCANS;
+        }
+    }
+    _stitcher = cv::Stitcher::create(stitching_mode);
+
+}
+
+void ImageStitcher::setDirectoryPath(const string& directory_path)
+{
+    _directory_path = directory_path;
 }
 
 void ImageStitcher::setImageExtension(const std::string& image_extension)
 {
     _image_extension = image_extension;
-}
-
-void ImageStitcher::setStitchingMethod(const std::string& stitching_method)
-{
-    _stitching_method = stitching_method;
 }
 
 void ImageStitcher::setConfidenceThreshold(double confidence_threshold)
@@ -49,8 +63,8 @@ void ImageStitcher::setDebugMode(bool debug_mode)
     _debug_mode = debug_mode;
 }
 
-bool ImageStitcher::stitchImages() {
-
+bool ImageStitcher::stitchImages()
+{
     // Read images from the specified directory
     std::vector<cv::Mat> images;
     std::vector<cv::String> imagePaths;
@@ -75,6 +89,7 @@ bool ImageStitcher::stitchImages() {
     // Configure the Stitcher
     cv::Mat result;
     _stitcher->setPanoConfidenceThresh(_confidence_threshold);
+
     // Set other Stitcher parameters based on the class settings
 
     // Perform image stitching
@@ -102,3 +117,5 @@ bool ImageStitcher::stitchImages() {
 
     return true;
 }
+
+#pragma clang diagnostic pop

@@ -1,14 +1,37 @@
-cmake_minimum_required(VERSION 3.12)
-project(OpenCVImageStitching)
+cmake_minimum_required(VERSION 3.18)
+project(image_stitching)
 
-# Find OpenCV
 find_package(OpenCV REQUIRED)
 
-# Set C++ standard to C++11
-set(CMAKE_CXX_STANDARD 11)
+add_library(${PROJECT_NAME}
+    SHARED
+        src/image_stitcher.cpp
+        inc/image_stitching/image_stitcher.h
+)
 
-# Add executable
-add_executable(image_stitching main.cpp 
+target_include_directories(${PROJECT_NAME}
+    PUBLIC inc
+)
 
-# Link against OpenCV
-target_link_libraries(image_stitching ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+        ${OpenCV_LIBS}
+)
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+        POSITION_INDEPENDENT_CODE TRUE
+)
+
+install(DIRECTORY inc/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/segue/include)
+
+install(TARGETS ${PROJECT_NAME}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/segue/lib)
+
+if(BUILD_UNITTEST)
+    #add_subdirectory(test)
+    add_subdirectory(demo)
+endif()
+
+

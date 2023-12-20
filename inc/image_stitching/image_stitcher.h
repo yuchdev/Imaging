@@ -20,8 +20,10 @@ public:
 
     /**
      * Constructor creates an OpenCV Stitcher object
+     * @param directoryPath: directory path where the input images are stored
+     * @param stitchingMethod: stitching method (e.g., "panorama", "scans")
      */
-    explicit ImageStitcher(const std::string& directory_path);
+    explicit ImageStitcher(const std::string& directory_path, const std::string& stitching_method);
 
     /**
      * Set the directory path where the input images are stored
@@ -34,12 +36,6 @@ public:
      * @param imageExtension
      */
     void setImageExtension(const std::string& image_extension);
-
-    /**
-     * Set the stitching method (e.g., "panorama", "scans", etc.)
-     * @param stitchingMethod
-     */
-    void setStitchingMethod(const std::string& stitching_method);
 
     /**
      * Set the confidence threshold for the stitching process
@@ -79,9 +75,6 @@ private:
     std::string _image_extension;
 
     /// Parameters for the stitching process
-    std::string _stitching_method;
-
-    /// Parameters for the stitching process
     std::string _output_file_path;
 
     /// Parameters for the stitching process
@@ -90,7 +83,7 @@ private:
     /// Parameters for the stitching process
     bool _debug_mode = false;
 
-    // Map for OpenCV error messages
+    /// Map for OpenCV error messages
     static std::map<cv::Stitcher::Status, std::string> error_messages;
 };
 
