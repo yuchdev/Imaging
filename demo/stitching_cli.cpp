@@ -16,6 +16,7 @@ void CommandLineParams::read_params(int argc, char* argv[])
             ("confidence,c", po::value<double>(&_confidence_threshold)->default_value(0.8), "Set the confidence threshold for feature matching")
             ("output,o", po::value<std::string>(&_output_file_path)->default_value(""), "Specify the path for saving the stitched image")
             ("debug", po::bool_switch(&_debug_mode)->default_value(false), "Enable extended debug output")
+            ("d3", po::bool_switch(&_debug_mode)->default_value(false), "D3 optimization creates three chunks of each image to increase stitching success")
             ;
 
     // command line params processing
@@ -25,6 +26,7 @@ void CommandLineParams::read_params(int argc, char* argv[])
 
     set_flag(cmd_variables_map, _help, "help");
     set_flag(cmd_variables_map, _version, "version");
+    set_flag(cmd_variables_map, _d3, "d3");
 
     // default output file name
     if (_output_file_path.empty()) {

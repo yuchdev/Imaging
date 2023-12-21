@@ -15,7 +15,8 @@ namespace image_stitching
  * Class for image stitching
  * Accept a number of parameters to control the stitching process
  */
-class ImageStitcher {
+class ImageStitcher
+{
 public:
 
     /**
@@ -24,6 +25,11 @@ public:
      * @param stitchingMethod: stitching method (e.g., "panorama", "scans")
      */
     explicit ImageStitcher(const std::string& directory_path, const std::string& stitching_method);
+
+    /**
+     * Stitcher status code ro string
+     */
+    static std::string getStitchingErrorMessage(cv::Stitcher::Status status);
 
     /**
      * Set the directory path where the input images are stored
@@ -58,6 +64,12 @@ public:
     void setDebugMode(bool debug_mode);
 
     /**
+     * Internally creates three chunks of each image to increase stitching success
+     * @param is_d3
+     */
+    void setD3Optimization(bool is_d3);
+
+    /**
      * Stitch images
      * @return true if successful, false otherwise
      */
@@ -82,6 +94,9 @@ private:
 
     /// Parameters for the stitching process
     bool _debug_mode = false;
+
+    /// Parameters for the stitching process
+    bool _d3 = false;
 
     /// Map for OpenCV error messages
     static std::map<cv::Stitcher::Status, std::string> error_messages;

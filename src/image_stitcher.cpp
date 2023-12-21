@@ -1,15 +1,23 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-pass-by-value"
 #include <image_stitching/image_stitcher.h>
-
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/stitching.hpp>
 
+#if 0
+#include <Log.h>
+using namespace leica_logger;
+#else
+#define LogWarning(x) std::cout 
+#endif
+
+using namespace image_stitching;
+
 using std::string;
 using std::vector;
 using std::map;
-using namespace image_stitching;
+
 
 // static
 map<cv::Stitcher::Status, string> ImageStitcher::error_messages = {
@@ -38,6 +46,12 @@ ImageStitcher::ImageStitcher(const string& directory_path, const string& stitchi
 
 }
 
+std::string ImageStitcher::getStitchingErrorMessage(cv::Stitcher::Status status)
+{
+    auto it = error_messages.find(status);
+    return (it != error_messages.end()) ? it->second : "Unknown error";
+}
+
 void ImageStitcher::setDirectoryPath(const string& directory_path)
 {
     _directory_path = directory_path;
@@ -63,6 +77,11 @@ void ImageStitcher::setDebugMode(bool debug_mode)
     _debug_mode = debug_mode;
 }
 
+void ImageStitcher::setD3Optimization(bool enable) 
+{
+    _d3 = enable;
+}
+
 bool ImageStitcher::stitchImages()
 {
     // Read images from the specified directory
@@ -77,12 +96,25 @@ bool ImageStitcher::stitchImages()
             std::cerr << "Error reading image: " << imagePath << std::endl;
             return false;
         }
-        images.push_back(img);
+
+        if (_d3) {
+
+            // Divide each image into three chunks
+            int chunkWidth = img.cols / 3;
+            for (int i = 0; i < 3; ++i) {
+                cv::Rect rect(i * chunkWidth, 0, chunkWidth, img.rows);
+                images.push_back(img(rect).clone());
+            }
+        } 
+        else {
+            // Use the whole image
+            images.push_back(img);
+        }
     }
 
     // Check if there are enough images for stitching
     if (images.size() < 2) {
-        std::cerr << "Insufficient number of images for stitching." << std::endl;
+        LogWarning() << "Insufficient number of images for stitching";
         return false;
     }
 
@@ -97,7 +129,7 @@ bool ImageStitcher::stitchImages()
 
     // Check if stitching was successful
     if (status != cv::Stitcher::OK) {
-        std::cerr << "Stitching failed: " << status << std::endl;
+        LogWarning() << "Stitching failed; status=" << status << "; " << getStitchingErrorMessage(status);
         return false;
     }
 
@@ -110,7 +142,7 @@ bool ImageStitcher::stitchImages()
     // Save the stitched image
     if (!_output_file_path.empty()) {
         if (!cv::imwrite(_output_file_path, result)) {
-            std::cerr << "Error saving stitched image to: " << _output_file_path << std::endl;
+            LogWarning() << "Error saving stitched image to: " << _output_file_path;
             return false;
         }
     }

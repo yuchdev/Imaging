@@ -42,6 +42,7 @@ int main(int argc, char* argv[])
         stitcher.setConfidenceThreshold(get_params().get_confidence_threshold());
         stitcher.setOutputFilePath(get_params().get_output_file_path());
         stitcher.setDebugMode(get_params().get_debug_mode());
+        stitcher.setD3Optimization(get_params().get_d3());
 
         // Perform image stitching
         if (!stitcher.stitchImages()) {

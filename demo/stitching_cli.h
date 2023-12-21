@@ -82,17 +82,23 @@ public:
         return _debug_mode;
     }
 
+    // Getter functions for flags
+    bool get_d3() const {
+        return _d3;
+    }
+
 private:
     bool _help = false;
     bool _version = false;
+    bool _debug_mode = false;
+    bool _d3 = false;
 
     // Parameters
     std::string _directory_path;
     std::string _image_extension;
     std::string _stitching_method;
-    double _confidence_threshold;
     std::string _output_file_path;
-    bool _debug_mode;
+    double _confidence_threshold;
 
     boost::program_options::options_description cmd_options_description;
 };
